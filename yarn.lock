@@ -930,6 +930,11 @@ chalk@^4.1.2:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
+chess.js@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/chess.js/-/chess.js-1.1.0.tgz#25a100e38f423ae4838a7d9321bfa5532ba4a618"
+  integrity sha512-IfdeaJnpdU1LddIenp36O7Fz19nIxk3x4cznwo2Qf25T1XSeP85XRBrjWUsSpk1RpDeXdijraoLxXt3PCaudVg==
+
 chessground@^9.1.1:
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/chessground/-/chessground-9.1.1.tgz#2362f1b5775755c468da3941b10c80e6e32b3340"
