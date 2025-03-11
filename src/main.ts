@@ -31,12 +31,15 @@ const Board = ({moves, color, onMove}) => {
         }
       }
     }
+
+    const cgColor = {w: 'white', b: 'black'}[color];
     
     board.set({
       fen: chess.fen(),
       turnColor: {w: 'white', b: 'black'}[chess.turn()] as cg.Color,
+      orientation: cgColor,
       movable: {
-        color: {w: 'white', b: 'black'}[color],
+        color: cgColor,
         dests,
         events: {
           after: (from, to) => {
@@ -59,14 +62,19 @@ const App = () => {
   const [moves, setMoves] = useState<string[]>([]);
   const [color, setColor] = useState('w');
 
+  const chess = new Chess();
+  let analysisPgn = '';
+  for(const move of moves) {
+    if(analysisPgn.length > 0) {
+      analysisPgn += '_';
+    }
+    analysisPgn += move;
+    chess.move(move);
+  }
+
   useEffect(() => {
     const whiteTurn = (moves.length & 1) == 0;
     if(whiteTurn != (color == 'w')) {
-      const chess = new Chess();
-      for(const move of moves) {
-        chess.move(move);
-      }
-
       (async () => {
         const response = await fetch('https://explorer.lichess.ovh/lichess' + toQuery({
           fen: chess.fen(),
@@ -100,11 +108,23 @@ const App = () => {
     }
   }, [moves, color])
 
-  return h(Board, {moves, color, onMove: (m: string) => {
-    const mvs = moves.slice();
-    mvs.push(m);
-    setMoves(mvs);
-  }});
+  return h('div', null, [
+    h(Board, {moves, color, onMove: (m: string) => {
+      const mvs = moves.slice();
+      mvs.push(m);
+      setMoves(mvs);
+    }}),
+
+    h('div', null, h('button', {onclick: () => { setMoves([]); }}, 'Restart')),
+
+    h('div', null, [
+      'Play as: ',
+      h('input', {type: 'radio', id: 'colorWhite', checked: color == 'w', onChange: () => setColor('w')}), h('label', {for: 'colorWhite'}, 'White'),
+      h('input', {type: 'radio', id: 'colorBlack', checked: color == 'b', onChange: () => setColor('b')}), h('label', {for: 'colorBlack'}, 'Black')
+    ]),
+
+    h('div', null, h('a', {href: 'https://lichess.org/analysis/pgn/' + analysisPgn, target: '_black'}, 'Analysis'))
+  ]);
 };
 
 render(h(App, null), document.body);
