@@ -16,9 +16,11 @@ const Board = ({moves, color, onMove}) => {
 
     const board = boardRef.current;
 
+    let lastMove: cg.Key[] = [];
     const chess = new Chess();
     for(const move of moves) {
-      chess.move(move);
+      const m = chess.move(move);
+      lastMove = [m.from, m.to];
     }
     
     const dests = new Map();
@@ -38,6 +40,7 @@ const Board = ({moves, color, onMove}) => {
       fen: chess.fen(),
       turnColor: {w: 'white', b: 'black'}[chess.turn()] as cg.Color,
       orientation: cgColor,
+      lastMove: lastMove,
       movable: {
         color: cgColor,
         dests,
@@ -108,7 +111,7 @@ const App = () => {
     }
   }, [moves, color])
 
-  return h('div', null, [
+  return [
     h(Board, {moves, color, onMove: (m: string) => {
       const mvs = moves.slice();
       mvs.push(m);
@@ -124,7 +127,7 @@ const App = () => {
     ]),
 
     h('div', null, h('a', {href: 'https://lichess.org/analysis/pgn/' + analysisPgn, target: '_black'}, 'Analysis'))
-  ]);
+  ];
 };
 
 render(h(App, null), document.body);
