@@ -23,7 +23,7 @@ jobs:
       - name: Build
         run: yarn parcel build --no-cache src/index.html
       - name: Upload artifacts
-        uses: actions/upload-pages-artifacts@v3
+        uses: actions/upload-pages-artifact@v3
         with:
           path: dist/
 
