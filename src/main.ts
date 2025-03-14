@@ -112,6 +112,7 @@ const App = () => {
   }, [moves, color])
 
   return [
+    h('div', {id: 'sourceLink'}, h('a', {href: 'https://github.com/exoticorn/chess-training'}, 'Source [GPLv3]')),
     h(Board, {moves, color, onMove: (m: string) => {
       const mvs = moves.slice();
       mvs.push(m);
