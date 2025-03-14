@@ -16,7 +16,7 @@ jobs:
       - name: Cache node_modules
         uses: actions/cache@v3
         with:
-          path: ~/node_modules/
+          path: node_modules/
           key: node_modules
       - name: Update node_modules
         run: yarn install
@@ -33,6 +33,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
