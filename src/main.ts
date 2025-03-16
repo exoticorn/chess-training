@@ -64,6 +64,8 @@ const Board = ({moves, color, onMove}) => {
 const App = () => {
   const [moves, setMoves] = useState<string[]>([]);
   const [color, setColor] = useState('w');
+  const [speeds, setSpeeds] = useState(['blitz']);
+  const [ratings, setRatings] = useState([1800]);
 
   const chess = new Chess();
   let analysisPgn = '';
@@ -81,8 +83,8 @@ const App = () => {
       (async () => {
         const response = await fetch('https://explorer.lichess.ovh/lichess' + toQuery({
           fen: chess.fen(),
-          speeds: 'blitz',
-          ratings: '1800',
+          speeds: speeds.join(),
+          ratings: ratings.join(),
           topGames: 0,
           recentGames: 0
         }));
@@ -111,6 +113,18 @@ const App = () => {
     }
   }, [moves, color])
 
+  const cb = (set, value, setFunc) => [
+    h('input', { type: 'checkbox', id: 'cb' + value, checked: set.includes(value), onChange: () => {
+      const index = set.indexOf(value);
+      if(index < 0) {
+        setFunc(set.toSpliced(set.length, 0, value));
+      } else {
+        setFunc(set.toSpliced(index, 1));
+      }
+    }}),
+    h('label', {for: 'cb' + value}, value.toString())
+  ];
+
   return [
     h('div', {id: 'sourceLink'}, h('a', {href: 'https://github.com/exoticorn/chess-training'}, 'Source [GPLv3]')),
     h(Board, {moves, color, onMove: (m: string) => {
@@ -125,6 +139,29 @@ const App = () => {
       'Play as: ',
       h('input', {type: 'radio', id: 'colorWhite', checked: color == 'w', onChange: () => setColor('w')}), h('label', {for: 'colorWhite'}, 'White'),
       h('input', {type: 'radio', id: 'colorBlack', checked: color == 'b', onChange: () => setColor('b')}), h('label', {for: 'colorBlack'}, 'Black')
+    ]),
+
+    h('div', null, [
+      'Speeds: ',
+      cb(speeds, 'ultraBullet', setSpeeds),
+      cb(speeds, 'bullet', setSpeeds),
+      cb(speeds, 'blitz', setSpeeds),
+      cb(speeds, 'rapid', setSpeeds),
+      cb(speeds, 'classical', setSpeeds),
+      cb(speeds, 'correspondence', setSpeeds),
+    ]),
+
+    h('div', null, [
+      'Ratings: ',
+      cb(ratings, 0, setRatings),
+      cb(ratings, 1000, setRatings),
+      cb(ratings, 1200, setRatings),
+      cb(ratings, 1400, setRatings),
+      cb(ratings, 1600, setRatings),
+      cb(ratings, 1800, setRatings),
+      cb(ratings, 2000, setRatings),
+      cb(ratings, 2200, setRatings),
+      cb(ratings, 2500, setRatings),
     ]),
 
     h('div', null, h('a', {href: 'https://lichess.org/analysis/pgn/' + analysisPgn, target: '_black'}, 'Analysis'))
